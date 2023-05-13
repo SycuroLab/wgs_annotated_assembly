@@ -1,0 +1,36 @@
+{
+  "__default__" :
+  {
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
+    "partition": "synergy,cpu2019,cpu2021,cpu2022",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus-per-task": 14,
+    "time" : "2-00:00:00",
+    "mem" : 60G,
+    "output" : "logs/{rule}.{wildcards}.out",
+    "error" : "logs/{rule}.{wildcards}.err"
+  },
+  "checkm" :
+  {
+    "partition": "synergy,cpu2021,cpu2022",
+    "cpus-per-task" : 28,
+    "time" : "05:00:00",
+    "mem" : 220G,
+    "output" : "logs/{rule}.{wildcards}.out",
+    "error" : "logs/{rule}.{wildcards}.err"
+
+  },
+  "gtdbtk" :
+  {
+    "partition": "synergy,cpu2021,cpu2022",
+    "cpus-per-task" : 28,
+    "time" : "05:00:00",
+    "mem" : 220G,
+    "output" : "logs/{rule}.{wildcards}.out",
+    "error" : "logs/{rule}.{wildcards}.err"
+
+  }
+
+
+}

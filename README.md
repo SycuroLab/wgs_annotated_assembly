@@ -1,1 +1,1 @@
-# wgs_annotated_assembly
+# genome_assembly_analysis
