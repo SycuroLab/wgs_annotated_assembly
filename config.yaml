@@ -2,18 +2,18 @@
 # * Parameters for metagenotate pipeline *
 # ***************************************
 
-list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/proteomics_pangenomes/chlamydia_trachomatis/software/genome_assembly_analysis/chlamydia_trachomatis_genome_list.txt"
+list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/ref_list.txt"
 
-# Path to genome or MAG assembly.
-input_dir: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/proteomics_pangenomes/chlamydia_trachomatis/genome_assemblies"
+# Path to fastq_files.
+input_dir: "/home/kevin.muirhead/fastq"
 
-output_dir: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/proteomics_pangenomes/chlamydia_trachomatis/assembly_analysis_output"
+output_dir: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly_test"
 
 # Suffix for forward reads.
-forward_read_suffix: "_1.fastq.gz"
+forward_read_suffix: "_R1.fastq.gz"
 
 # Suffix for reverse reads.
-reverse_read_suffix: "_2.fastq.gz"
+reverse_read_suffix: "_R2.fastq.gz"
 
 ### Prinseq parameters
 trimleft: 0
@@ -43,11 +43,8 @@ memory_in_gb: 220
 
 ## Filter by length
 
-# Minimum sequence length of the final metagenome assembly file. Default: 500
-min_sequence_length: 500
-
-# Minumum contig length for binning programs.
-min_contig_length: 1500
+# Minimum sequence length of the final genome assembly file. Default: 500
+min_scaffold_length: 500
 
 ### quast parameters.
 

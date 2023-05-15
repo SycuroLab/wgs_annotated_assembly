@@ -27,8 +27,12 @@ echo "started at: `date`"
 source ~/.bashrc
 
 # Activate the snakemake conda environment.
-conda activate snakemake
+conda activate snakemake_env
 
+# Unlock snakemake folder as a fail safe.
+snakemake --unlock
+
+# Snakemake command
 snakemake --cluster-config cluster.json --cluster 'sbatch --partition={cluster.partition} --cpus-per-task={cluster.cpus-per-task} --nodes={cluster.nodes} --ntasks={cluster.ntasks} --time={cluster.time} --mem={cluster.mem} --output={cluster.output} --error={cluster.error}' --jobs $num_jobs --latency-wait $latency_wait --restart-times $restart_times --rerun-incomplete --use-conda &> $log_dir/$log_file
 
 output_dir=$(grep "output_dir" < config.yaml | grep -v "#" | cut -d ' ' -f2 | sed 's/"//g')

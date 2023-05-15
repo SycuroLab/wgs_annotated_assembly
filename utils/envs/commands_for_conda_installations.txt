@@ -1,0 +1,39 @@
+##conda create --name spades_env
+##conda activate spades_env
+##conda install -c bioconda spades
+##conda env export > spades_env.yaml
+
+
+ 1220  wget https://anaconda.org/bioconda/spades/3.15.5/download/linux-64/spades-3.15.5-h95f258a_1.tar.bz2
+ 1221  conda create --name spades_env
+ 1222  conda install spades-3.15.5-h95f258a_1.tar.bz2 
+
+
+# Download the spades conda environment package.
+wget https://anaconda.org/bioconda/spades/3.15.5/download/linux-64/spades-3.15.5-h95f258a_1.tar.bz2
+
+# Create the spades conda environment.
+conda create --name spades_env
+
+# Install the spades conda environment using the tar conda package.
+conda install spades-3.15.5-h95f258a_1.tar.bz2 
+
+# Make the spades conda yaml file for quick installation.
+conda env export > spades_env.yaml
+
+
+^^^^ TOP DIDN't work trying this version.
+
+conda create --name spades_env
+conda activate spades_env
+conda install -c conda-forge python==3.9.12
+conda install -c bioconda spades==3.13.0
+conda env export > spades_env.yaml
+
+
+### QUAST
+conda activate quast_env
+conda install -c conda-forge python
+pip install quast
+
+

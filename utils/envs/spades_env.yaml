@@ -1,5 +1,6 @@
-name: quast_env
+name: spades_env
 channels:
+  - bioconda
   - conda-forge
   - defaults
 dependencies:
@@ -8,26 +9,25 @@ dependencies:
   - bzip2=1.0.8=h7f98852_4
   - ca-certificates=2023.5.7=hbcca054_0
   - ld_impl_linux-64=2.40=h41732ed_0
-  - libexpat=2.5.0=hcb278e6_1
-  - libffi=3.4.2=h7f98852_5
+  - libffi=3.3=h58526e2_2
   - libgcc-ng=12.2.0=h65d4601_19
   - libgomp=12.2.0=h65d4601_19
   - libnsl=2.0.0=h7f98852_0
   - libsqlite=3.41.2=h2797004_1
+  - libstdcxx-ng=12.2.0=h46fd767_19
   - libuuid=2.38.1=h0b41bf4_0
   - libzlib=1.2.13=h166bdaf_4
   - ncurses=6.3=h27087fc_1
-  - openssl=3.1.0=hd590300_3
+  - openssl=1.1.1t=h7f8727e_0
   - pip=23.1.2=pyhd8ed1ab_0
-  - python=3.11.3=h2755cc3_0_cpython
+  - python=3.9.0=hffdb5ce_5_cpython
   - readline=8.2=h8228510_1
   - setuptools=67.7.2=pyhd8ed1ab_0
+  - spades=3.13.0=0
+  - sqlite=3.41.2=h2c6b66d_1
   - tk=8.6.12=h27826a3_0
   - tzdata=2023c=h71feb2d_0
   - wheel=0.40.0=pyhd8ed1ab_0
   - xz=5.2.6=h166bdaf_0
-  - pip:
-      - joblib==1.2.0
-      - quast==5.2.0
-      - simplejson==3.19.1
-prefix: /work/sycuro_lab/kevin/miniconda3/envs/quast_env
+  - zlib=1.2.13=h166bdaf_4
+prefix: /work/sycuro_lab/kevin/miniconda3/envs/spades_env
