@@ -45,7 +45,7 @@ rule all:
 ##        expand(config["output_dir"]+"/{sample}/metaerg/data/all.gff",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/checkm/checkm.tsv",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/gtdbtk/gtdbtk.bac120.summary.tsv",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/{sample}_eggnog_mapper_results.emapper.annotations",sample=SAMPLES)
+        expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/eggnog_mapper_results.emapper.annotations",sample=SAMPLES)
 #        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
 
 rule fastqc_raw:
@@ -309,10 +309,10 @@ rule eggnog_mapper:
     input:
        prokka_faa_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.faa"), 
     output:
-       eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}_eggnog_mapper_results.emapper.annotations"),
+       eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","eggnog_mapper_results.emapper.annotations"),
     params:
        eggnog_mapper_db = config["eggnog_mapper_db"],
-       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}_eggnog_mapper"),
+       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","eggnog_mapper"),
        threads = config["eggnog_mapper_threads"]
     conda: "utils/envs/eggnog_mapper_env.yaml"
     shell:
