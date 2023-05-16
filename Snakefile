@@ -45,7 +45,7 @@ rule all:
 ##        expand(config["output_dir"]+"/{sample}/metaerg/data/all.gff",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/checkm/checkm.tsv",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/gtdbtk/gtdbtk.bac120.summary.tsv",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/eggnog_mapper_results.emapper.annotations",sample=SAMPLES)
+        expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/{sample}.emapper.annotations",sample=SAMPLES),
 #        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
 
 rule fastqc_raw:
@@ -309,10 +309,10 @@ rule eggnog_mapper:
     input:
        prokka_faa_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.faa"), 
     output:
-       eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","eggnog_mapper_results.emapper.annotations"),
+       eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}.emapper.annotations"),
     params:
        eggnog_mapper_db = config["eggnog_mapper_db"],
-       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","eggnog_mapper"),
+       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}"),
        threads = config["eggnog_mapper_threads"]
     conda: "utils/envs/eggnog_mapper_env.yaml"
     shell:
@@ -320,14 +320,13 @@ rule eggnog_mapper:
 
 #rule merge_assembly_analysis_data:
 #    input:
-#        assembly_file = os.path.join(config["output_dir"],"genomes","{wildcards.sample}","assembly","{sample}_genome.fa")
+#        expand(os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa"),sample=SAMPLES)
 #    output:
 #        merged_metadata_file = os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv"),
-#
+
 #    params:
 #       input_dir = os.path.join(config["output_dir"],"genomes"),
 #       output_dir = os.path.join(config["output_dir"],"metadata_files")
-#    conda: "utils/envs/gtdbtk_env.yaml"
 #    shell:
 #       "python utils/scripts/merge_assembly_analysis_data.py --input_dir {params.input_dir} --output_dir {params.output_dir}"
 
