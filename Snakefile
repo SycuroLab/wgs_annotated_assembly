@@ -312,7 +312,7 @@ rule eggnog_mapper:
        eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}_eggnog_mapper_results.emapper.annotations"),
     params:
        eggnog_mapper_db = config["eggnog_mapper_db"],
-       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper"),
+       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","eggnog_mapper"),
        threads = config["eggnog_mapper_threads"]
     conda: "utils/envs/eggnog_mapper_env.yaml"
     shell:
