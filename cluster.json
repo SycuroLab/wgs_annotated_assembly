@@ -136,7 +136,16 @@
     "output" : "logs/{rule}.{wildcards}.out",
     "error" : "logs/{rule}.{wildcards}.err"
 
-  }
+  },
+  "eggnog_mapper" :
+  {
+    "partition": "synergy,cpu2021,cpu2022,cpu2023",
+    "cpus-per-task" : 14,
+    "time" : "05:00:00",
+    "mem" : 60G,
+    "output" : "logs/{rule}.{wildcards}.out",
+    "error" : "logs/{rule}.{wildcards}.err"
 
+  }
 
 }

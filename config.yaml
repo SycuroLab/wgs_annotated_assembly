@@ -86,3 +86,9 @@ gtdbtk_database_path: "/bulk/IMCshared_bulk/shared/dbs/gtdbtk-1.5.0/db"
 # Number of threads for gtdbtk rule.
 gtdbtk_threads: 28
 
+### eggnog-mapper parameters
+eggnog_mapper_db: "/bulk/IMCshared_bulk/shared/shared_software/eggnog-mapper/data"
+
+eggnog_mapper_threads: 14
+
+#

@@ -45,7 +45,9 @@ rule all:
 ##        expand(config["output_dir"]+"/{sample}/metaerg/data/all.gff",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/checkm/checkm.tsv",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/gtdbtk/gtdbtk.bac120.summary.tsv",sample=SAMPLES),
-        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
+        expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/{sample}_eggnog_mapper_results.emapper.annotations",sample=SAMPLES)
+#        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
+
 rule fastqc_raw:
     input:
         r1 = os.path.join(config["input_dir"],"{sample}"+config["forward_read_suffix"]),
@@ -126,8 +128,8 @@ rule spades_assembly:
         memory_in_gb = config["memory_in_gb"],
         threads = config["assembler_threads"],
         sample_assembly_dir = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades")
-#    conda: "utils/envs/spades_env.yaml"
-    conda: "spades_env"
+    conda: "utils/envs/spades_env.yaml"
+#    conda: "spades_env"
     shell:
         "spades.py -t {params.threads} -m {params.memory_in_gb} -o {params.sample_assembly_dir} -1 {input.r1} -2 {input.r2}"
 
@@ -301,6 +303,20 @@ rule gtdbtk:
        "filename=$(basename {input.assembly_file}); "
        "cp {input.assembly_file} {params.gtdbtk_dir}/$filename; "
        "gtdbtk classify_wf --genome_dir {params.gtdbtk_dir} --extension \"fa\" --cpus {params.threads} --out_dir {params.gtdbtk_dir}; "
+
+
+rule eggnog_mapper:
+    input:
+       prokka_faa_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.faa"), 
+    output:
+       eggnog_mapper_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}_eggnog_mapper_results.emapper.annotations"),
+    params:
+       eggnog_mapper_db = config["eggnog_mapper_db"],
+       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper"),
+       threads = config["eggnog_mapper_threads"]
+    conda: "utils/envs/eggnog_mapper_env.yaml"
+    shell:
+       "python /bulk/IMCshared_bulk/shared/shared_software/eggnog-mapper/emapper.py -i {input.prokka_faa_file} --itype proteins --cpu {params.threads} --data_dir {params.eggnog_mapper_db} --output {params.eggnog_mapper_output_file_prefix}; "
 
 #rule merge_assembly_analysis_data:
 #    input:
