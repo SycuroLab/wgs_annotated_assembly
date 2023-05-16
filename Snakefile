@@ -37,15 +37,15 @@ rule all:
         expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/unmapped_spades_assembly_reads_R2.fastq",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/assembly/megahit/fixed_headers_final.contigs.fa",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/assembly/final_assembly.fasta",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/{sample}_genome.fasta",sample=SAMPLES),        
+        expand(config["output_dir"]+"/genomes/{sample}/assembly/{sample}_genome.fa",sample=SAMPLES),        
         expand(config["output_dir"]+"/genomes/{sample}/quast/transposed_report.tsv", sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.fna",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.gff",sample=SAMPLES),
 	expand(config["output_dir"]+"/genomes/{sample}/extracted_sequences/cpn60_metadata.csv",sample=SAMPLES),
 ##        expand(config["output_dir"]+"/{sample}/metaerg/data/all.gff",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/checkm/checkm.tsv",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/gtdbtk/gtdbtk.bac120.summary.tsv",sample=SAMPLES)
-
+        expand(config["output_dir"]+"/genomes/{sample}/gtdbtk/gtdbtk.bac120.summary.tsv",sample=SAMPLES),
+        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
 rule fastqc_raw:
     input:
         r1 = os.path.join(config["input_dir"],"{sample}"+config["forward_read_suffix"]),
@@ -212,14 +212,14 @@ rule rename_final_assembly_file:
     input:
         genome_final_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","final_assembly.fasta")
     output:
-        renamed_genome_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+        renamed_genome_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     conda: "utils/envs/biopython_env.yaml"
     shell:
         "python utils/scripts/fix_fasta_header_length.py -i {input.genome_final_assembly_file} -o {output.renamed_genome_assembly_file}"
 
 rule quast:
     input:
-        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     output:
         quast_transposed_report_file = os.path.join(config["output_dir"],"genomes","{sample}","quast","transposed_report.tsv")
     params:
@@ -231,7 +231,7 @@ rule quast:
 
 rule prokka:
     input:
-        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     output:
         prokka_fna_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.fna"),
         prokka_gff_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.gff")
@@ -241,7 +241,7 @@ rule prokka:
 	prefix = "{sample}"
     conda: "utils/envs/prokka_env.yaml"
     shell:
-       "prokka --genome --outdir {params.prokka_dir} --prefix {params.prefix} {input.assembly_file} --cpus {params.threads} --rfam 1 --force"
+       "prokka --outdir {params.prokka_dir} --prefix {params.prefix} {input.assembly_file} --cpus {params.threads} --rfam 1 --force"
 
 rule extract_marker_sequences:
     input:
@@ -257,7 +257,7 @@ rule extract_marker_sequences:
 
 #rule metaerg:
 #    input:
-#        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+#        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
 #    output:
 ##        metaerg_fna_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","metaerg","{sample}_genome.fna"),
 #        metaerg_gff_file = os.path.join(config["output_dir"],"genomes","{sample}","metaerg","data","all.gff")
@@ -271,7 +271,7 @@ rule extract_marker_sequences:
 
 rule checkm:
     input:
-        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     output:
         checkm_table_file = os.path.join(config["output_dir"],"genomes","{sample}","checkm","checkm.tsv")
     params:
@@ -288,7 +288,7 @@ rule checkm:
 
 rule gtdbtk:
     input:
-        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fasta")
+        assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     output:
         gtdbtk_file = os.path.join(config["output_dir"],"genomes","{sample}","gtdbtk","gtdbtk.bac120.summary.tsv")
     params:
@@ -301,4 +301,18 @@ rule gtdbtk:
        "filename=$(basename {input.assembly_file}); "
        "cp {input.assembly_file} {params.gtdbtk_dir}/$filename; "
        "gtdbtk classify_wf --genome_dir {params.gtdbtk_dir} --extension \"fa\" --cpus {params.threads} --out_dir {params.gtdbtk_dir}; "
+
+#rule merge_assembly_analysis_data:
+#    input:
+#        assembly_file = os.path.join(config["output_dir"],"genomes","{wildcards.sample}","assembly","{sample}_genome.fa")
+#    output:
+#        merged_metadata_file = os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv"),
+#
+#    params:
+#       input_dir = os.path.join(config["output_dir"],"genomes"),
+#       output_dir = os.path.join(config["output_dir"],"metadata_files")
+#    conda: "utils/envs/gtdbtk_env.yaml"
+#    shell:
+#       "python utils/scripts/merge_assembly_analysis_data.py --input_dir {params.input_dir} --output_dir {params.output_dir}"
+
 

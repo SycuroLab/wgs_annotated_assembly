@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=7-00:00:00
 #SBATCH --mem=5G
-#SBATCH --error=wgs_annotated_assembly_run.%J.err
-#SBATCH --output=wgs_annotated_assembly_run.%J.out
+#SBATCH --error=run_wgs_annotated_assembly.%J.err
+#SBATCH --output=run_wgs_annotated_assembly.%J.out
 
 log_dir="$(pwd)"
 log_file="logs/wgs_annotated_assembly.log.txt"

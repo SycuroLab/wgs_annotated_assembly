@@ -2,17 +2,23 @@
 # * Parameters for metagenotate pipeline *
 # ***************************************
 
-list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/ref_list.txt"
+#list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/ref_list.txt"
+
+list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/twist96_3_ref_list.txt"
 
 # Path to fastq_files.
-input_dir: "/home/kevin.muirhead/fastq"
+#input_dir: "/home/kevin.muirhead/fastq"
+
+input_dir: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/data/Plate1_L001"
 
 output_dir: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly_test"
 
 # Suffix for forward reads.
+#forward_read_suffix: "_R1.fastq.gz"
 forward_read_suffix: "_R1.fastq.gz"
 
 # Suffix for reverse reads.
+#reverse_read_suffix: "_R2.fastq.gz"
 reverse_read_suffix: "_R2.fastq.gz"
 
 ### Prinseq parameters
