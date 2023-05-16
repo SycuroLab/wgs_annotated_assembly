@@ -6,3 +6,6 @@ Place this into bash_profile or bash_rc. Or in the rule itself. Probably just ba
  1043  gunzip -c SRR7659115_pass_1.fastq.gz | sed 's;\(^@SRR7659115\.[0-9]*\)\.[0-9].*;\1/1;g' > SRR7659115_pass_1.fastq
  1044  gunzip -c SRR7659115_pass_1.fastq.gz | sed 's;\(^@SRR7659115\.[0-9]*\)\.[0-9].*;\1/2;g' > SRR7659115_pass_2.fastq
 
+
+I need to make sure that the prinseq rule can process both gzipped and regular fastq files.
+
