@@ -41,6 +41,7 @@ rule all:
         expand(config["output_dir"]+"/genomes/{sample}/quast/transposed_report.tsv", sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.fna",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.gff",sample=SAMPLES),
+        expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.faa",sample=SAMPLES),
 	expand(config["output_dir"]+"/genomes/{sample}/extracted_sequences/cpn60_metadata.csv",sample=SAMPLES),
 ##        expand(config["output_dir"]+"/{sample}/metaerg/data/all.gff",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/checkm/checkm.tsv",sample=SAMPLES),
@@ -147,8 +148,8 @@ rule filter_long_scaffolds:
 rule map_reads_to_assembly:
     input:
         long_scaffolds_spades_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/long_scaffolds.fasta"),
-        fastq_read1 = os.path.join(config["input_dir"],"{sample}"+config["forward_read_suffix"]),
-        fastq_read2 = os.path.join(config["input_dir"],"{sample}"+config["reverse_read_suffix"])
+        fastq_read1 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_1.fastq"),
+        fastq_read2 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_2.fastq")
     output:
         spades_scaffolds_sam_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/mapped_spades_assembly_reads.sam")
     params:
@@ -236,7 +237,8 @@ rule prokka:
         assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     output:
         prokka_fna_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.fna"),
-        prokka_gff_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.gff")
+        prokka_gff_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.gff"),
+        prokka_faa_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.faa")
     params:
         prokka_dir = os.path.join(config["output_dir"],"genomes","{sample}","prokka"),
         threads = config["prokka_threads"],
@@ -317,6 +319,19 @@ rule eggnog_mapper:
     conda: "utils/envs/eggnog_mapper_env.yaml"
     shell:
        "python /bulk/IMCshared_bulk/shared/shared_software/eggnog-mapper/emapper.py -i {input.prokka_faa_file} --itype proteins --cpu {params.threads} --data_dir {params.eggnog_mapper_db} --output {params.eggnog_mapper_output_file_prefix}; "
+
+#rule dbcan:
+#    input:
+#       prokka_faa_file = os.path.join(config["output_dir"],"genomes","{sample}","prokka","{sample}.faa"),
+#    output:
+#       dbcan_overview_file = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}.emapper.annotations"),
+#    params:
+#       eggnog_mapper_db = config["eggnog_mapper_db"],
+#       eggnog_mapper_output_file_prefix = os.path.join(config["output_dir"],"genomes","{sample}","eggnog_mapper","{sample}"),
+#       threads = config["eggnog_mapper_threads"]
+#    conda: "utils/envs/eggnog_mapper_env.yaml"
+#    shell:
+#       "python /bulk/IMCshared_bulk/shared/shared_software/eggnog-mapper/emapper.py -i {input.prokka_faa_file} --itype proteins --cpu {params.threads} --data_dir {params.eggnog_mapper_db} --output {params.eggnog_mapper_output_file_prefix}; "
 
 #rule merge_assembly_analysis_data:
 #    input:
