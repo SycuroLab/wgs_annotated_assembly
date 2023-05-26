@@ -201,17 +201,29 @@ for line in gff_input_file.readlines():
 
 # Print out marker sequence metadata file for parsing.
 for marker in markers:
-	csv_writer_file_handle = open(os.path.join(output_dir, "_".join([marker,"metadata"]) + ".csv"), "w+")
-	csv_writer = csv.writer(csv_writer_file_handle, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-	csv_writer.writerow(["sequence_id","feature_id","marker","search_term","type","feature_metadata","marker_sequence"])
-	#fasta_outfile = os.path.join(output_dir, "_".join([marker,"sequences"]) + ".fasta")
-	#fasta_output_file = open(fasta_outfile, "w+")
-	if(marker in sequence_entries):
-		for sequence_id in sequence_entries[marker]:
+    csv_writer_file_handle = open(os.path.join(output_dir, "_".join([marker,"metadata"]) + ".csv"), "w+")
+    csv_writer = csv.writer(csv_writer_file_handle, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    csv_writer.writerow(["sequence_id","feature_id","marker","search_term","type","feature_metadata","marker_sequence"])
+    if(marker in sequence_entries):
+        fasta_outfile = os.path.join(output_dir, "_".join([marker, "sequences"]) + ".fasta")
+        fasta_output_file = open(fasta_outfile, "w+")
+        for sequence_id in sequence_entries[marker]:
+            for sequence_entry in sequence_entries[marker][sequence_id]:
+                (feature_id,feature_metadata,search_term,type,sequence_length,marker_sequence) = sequence_entry
+                
+                csv_writer.writerow([sequence_id,feature_id,marker,search_term,type,feature_metadata,marker_sequence])
+                
+                source = "Prokka"
+                sequence_length = len(marker_sequence)
 
-			for sequence_entry in sequence_entries[marker][sequence_id]:
-				(feature_id,feature_metadata,search_term,type,sequence_length,marker_sequence) = sequence_entry
+                header = "{feature_id} scaffold_id={sequence_id} locus_tag={feature_id} marker={marker} source={source} length={sequence_length}".format(sequence_id=sequence_id,feature_id=feature_id,sequence_length=sequence_length,marker=marker,source=source)
+                print(header)
+                record = SeqRecord(
+                    Seq(str(marker_sequence)),
+                    id=header,
+                    description=""
+                )
 
-				#print(organism_name)
-				csv_writer.writerow([sequence_id,feature_id,marker,search_term,type,
-                feature_metadata,marker_sequence])
+
+                SeqIO.write(record, fasta_output_file, "fasta")
+        fasta_output_file.close()
