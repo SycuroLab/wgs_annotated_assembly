@@ -47,7 +47,7 @@ cp Snakefile $snakemake_file_dir
 cp config.yaml $snakemake_file_dir
 cp cluster.json $snakemake_file_dir
 cp wgs_annotated_assembly_sbatch.sh $snakemake_file_dir 
-cp wgs_annotated_assembly_run* $snakemake_file_dir
+cp run_wgs_annotated_assembly* $snakemake_file_dir
 
 cp -rf logs $snakemake_file_dir
 cp -rf utils $snakemake_file_dir
