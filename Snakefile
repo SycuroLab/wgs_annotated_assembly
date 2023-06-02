@@ -1,5 +1,5 @@
 # ***************************************
-# * Snakefile for genome_genomes pipeline *
+# * Snakefile for wgs_annotated_assembly pipeline *
 # ***************************************
 
 # **** Variables ****
