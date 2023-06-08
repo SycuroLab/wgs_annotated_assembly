@@ -107,8 +107,6 @@ rule prinseq:
         r2 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_2.fastq")
     conda: "utils/envs/prinseq_env.yaml"
     shell:
-            "gunzip -c {input.r1} > {params.r1}; "
-            "gunzip -c {input.r2} > {params.r2}; "
             "perl utils/scripts/prinseq-lite.pl -fastq {params.r1} -fastq2 {params.r2} "
             "-trim_left {config[trimleft]} -trim_right {config[trimright]} "
             "-out_good {params.prefix} -out_bad null -lc_method {config[lc_method]} -lc_threshold {config[lc_threshold]} "
