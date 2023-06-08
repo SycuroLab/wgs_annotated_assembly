@@ -49,6 +49,28 @@ rule all:
         expand(config["output_dir"]+"/genomes/{sample}/eggnog_mapper/{sample}.emapper.annotations",sample=SAMPLES),
 #        os.path.join(config["output_dir"],"metadata_files","all_merged_assembly_analysis_metadata.tsv")
 
+rule merge_reads:
+    input:
+        r11 = config["input_dir"]+"{sample}_L001"+config["forward_read_suffix"],
+        r12 = config["input_dir"]+"{sample}_L001"+config["reverse_read_suffix"],
+        r21 = config["input_dir"]+"{sample}_L002"+config["forward_read_suffix"],
+        r22 = config["input_dir"]+"{sample}_L002"+config["reverse_read_suffix"]
+    output:
+        o1=config["output_dir"] + "/merged_data/{sample}_R1.fastq",
+        o2=config["output_dir"] + "/merged_data/{sample}_R2.fastq"
+    params:
+        r11 = config["input_dir"]+"{sample}_L001_R1.fastq",
+        r12 = config["input_dir"]+"{sample}_L001_R2.fastq",
+        r21 = config["input_dir"]+"{sample}_L002_R1.fastq",
+        r22 = config["input_dir"]+"{sample}_L002_R2.fastq"
+    shell:
+#        "gunzip  {input.r11};"
+#        "gunzip  {input.r12};"
+#        "gunzip  {input.r21};"
+#        "gunzip {input.r22};"
+        "cat {params.r11} {params.r21} > {output.o1};"
+        "cat {params.r12} {params.r22} > {output.o2};"
+
 rule fastqc_raw:
     input:
         r1 = os.path.join(config["input_dir"],"{sample}"+config["forward_read_suffix"]),
