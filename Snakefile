@@ -99,15 +99,13 @@ rule prinseq:
         r1 = config["output_dir"] + "/merged_data/{sample}_R1.fastq",
         r2 = config["output_dir"] + "/merged_data/{sample}_R2.fastq"
     params:
-        r1 = os.path.join(config["input_dir"],"{sample}"+forward_read_num+".fastq"),
-        r2 = os.path.join(config["input_dir"],"{sample}"+reverse_read_num+".fastq"),
         prefix = os.path.join(config["output_dir"],"prinseq","{sample}_filtered")
     output:
         r1 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_1.fastq"),
         r2 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_2.fastq")
     conda: "utils/envs/prinseq_env.yaml"
     shell:
-            "perl utils/scripts/prinseq-lite.pl -fastq {params.r1} -fastq2 {params.r2} "
+            "perl utils/scripts/prinseq-lite.pl -fastq {input.r1} -fastq2 {input.r2} "
             "-trim_left {config[trimleft]} -trim_right {config[trimright]} "
             "-out_good {params.prefix} -out_bad null -lc_method {config[lc_method]} -lc_threshold {config[lc_threshold]} "
             "-derep 1 -trim_qual_type {config[trim_qual_type]} -trim_qual_window "
