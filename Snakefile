@@ -96,8 +96,8 @@ rule multiqc_raw:
 
 rule prinseq:
     input:
-        r1 = os.path.join(config["input_dir"],"{sample}"+config["forward_read_suffix"]),
-        r2 = os.path.join(config["input_dir"],"{sample}"+config["reverse_read_suffix"])
+        r1 = config["output_dir"] + "/merged_data/{sample}_R1.fastq",
+        r2 = config["output_dir"] + "/merged_data/{sample}_R2.fastq"
     params:
         r1 = os.path.join(config["input_dir"],"{sample}"+forward_read_num+".fastq"),
         r2 = os.path.join(config["input_dir"],"{sample}"+reverse_read_num+".fastq"),
