@@ -227,3 +227,5 @@ for marker in markers:
 
                 SeqIO.write(record, fasta_output_file, "fasta")
         fasta_output_file.close()
+
+

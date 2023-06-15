@@ -31,12 +31,6 @@ rule all:
         expand(os.path.join(config["output_dir"],"prinseq","{sample}_filtered_1.fastq"), sample=SAMPLES),
         os.path.join(config["output_dir"],"multiqc","multiqc_report_prinseq_filtered.html"),
         expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/scaffolds.fasta",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/long_scaffolds.fasta",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/mapped_spades_assembly_reads.sam",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/unmapped_spades_assembly_reads_R1.fastq",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/spades/unmapped_spades_assembly_reads_R2.fastq",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/megahit/fixed_headers_final.contigs.fa",sample=SAMPLES),
-        expand(config["output_dir"]+"/genomes/{sample}/assembly/final_assembly.fasta",sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/assembly/{sample}_genome.fa",sample=SAMPLES),        
         expand(config["output_dir"]+"/genomes/{sample}/quast/transposed_report.tsv", sample=SAMPLES),
         expand(config["output_dir"]+"/genomes/{sample}/prokka/{sample}.fna",sample=SAMPLES),
@@ -108,7 +102,7 @@ rule prinseq:
             "perl utils/scripts/prinseq-lite.pl -fastq {input.r1} -fastq2 {input.r2} "
             "-trim_left {config[trimleft]} -trim_right {config[trimright]} "
             "-out_good {params.prefix} -out_bad null -lc_method {config[lc_method]} -lc_threshold {config[lc_threshold]} "
-            "-derep 1 -trim_qual_type {config[trim_qual_type]} -trim_qual_window "
+            "-derep {config[derep]} -trim_qual_type {config[trim_qual_type]} -trim_qual_window "
             "{config[trim_qual_window]} -trim_qual_step {config[trim_qual_step]} "
             "-trim_qual_rule {config[trim_qual_rule]} -trim_qual_left {config[trim_qual_left]} "
             "-trim_qual_right {config[trim_qual_right]} -min_len {config[minlength]} "
@@ -152,92 +146,17 @@ rule spades_assembly:
     shell:
         "spades.py -t {params.threads} -m {params.memory_in_gb} -o {params.sample_assembly_dir} -1 {input.r1} -2 {input.r2}"
 
-rule filter_long_scaffolds:
+rule filter_sequences_by_length:
     input:
         spades_scaffolds_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/scaffolds.fasta")
     output:
-        long_scaffolds_spades_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/long_scaffolds.fasta")
+         renamed_genome_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
     params:
         min_scaffold_length = config["min_scaffold_length"]
     conda: "utils/envs/biopython_env.yaml"
     shell:
-        "python utils/scripts/filter_sequences_by_length.py -i {input.spades_scaffolds_assembly_file} -l {params.min_scaffold_length} -o {output.long_scaffolds_spades_file}"
-        
-rule map_reads_to_assembly:
-    input:
-        long_scaffolds_spades_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/long_scaffolds.fasta"),
-        fastq_read1 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_1.fastq"),
-        fastq_read2 = os.path.join(config["output_dir"],"prinseq","{sample}_filtered_2.fastq")
-    output:
-        spades_scaffolds_sam_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/mapped_spades_assembly_reads.sam")
-    params:
-        threads = config["assembler_threads"],
-        sample_assembly_dir = os.path.join(config["output_dir"],"genomes","{sample}","assembly")
-    conda: "utils/envs/bwa_env.yaml"
-    shell:
-        "bwa index {input.long_scaffolds_spades_file}; "
-        "bwa mem -t {params.threads} {input.long_scaffolds_spades_file} {input.fastq_read1} {input.fastq_read2} > {output.spades_scaffolds_sam_file}; "
-
-rule recover_unmapped_spades_reads:
-    input:
-        spades_scaffolds_sam_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/mapped_spades_assembly_reads.sam")
-    output:
-        unmapped_spades_scaffolds_read1_fastq_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/unmapped_spades_assembly_reads_R1.fastq"),
-        unmapped_spades_scaffolds_read2_fastq_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/unmapped_spades_assembly_reads_R2.fastq")
-    params:
-        threads = config["assembler_threads"],
-        sample_assembly_dir = os.path.join(config["output_dir"],"genomes","{sample}","assembly"),
-        spades_scaffolds_bam_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/mapped_spades_assembly_reads.bam"),
-        unmapped_spades_scaffolds_bam_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/unmapped_spades_assembly_reads.bam")
-    conda: "utils/envs/samtools_env.yaml"
-    shell:
-        "samtools view -S -b {input.spades_scaffolds_sam_file} --threads {params.threads} -o {params.spades_scaffolds_bam_file}; "
-        "samtools view -b -f 4 {params.spades_scaffolds_bam_file} --threads {params.threads} -o {params.unmapped_spades_scaffolds_bam_file}; "
-        "samtools fastq {params.unmapped_spades_scaffolds_bam_file} --threads {params.threads} -1 {output.unmapped_spades_scaffolds_read1_fastq_file} -2 {output.unmapped_spades_scaffolds_read2_fastq_file}; "
-
-rule megahit_unmapped_spades_reads:
-    input:
-        unmapped_spades_scaffolds_read1_fastq_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/unmapped_spades_assembly_reads_R1.fastq"),
-        unmapped_spades_scaffolds_read2_fastq_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/unmapped_spades_assembly_reads_R2.fastq")
-    output:
-        fixed_megahit_final_contigs_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","megahit/fixed_headers_final.contigs.fa")
-    params:
-        megahit_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","megahit/final.contigs.fa"),
-        threads = config["assembler_threads"],
-        sample_assembly_dir = os.path.join(config["output_dir"],"genomes","{sample}","assembly"),
-        memory_in_gb = config["memory_in_gb"]
-    conda: "utils/envs/megahit_env.yaml"
-    shell:
-        "megahit -1 {input.unmapped_spades_scaffolds_read1_fastq_file} -2 {input.unmapped_spades_scaffolds_read2_fastq_file} -t {params.threads} -m {params.memory_in_gb}000000000 -f -o {params.sample_assembly_dir}/megahit; "
-        "sed 's/ /_/g' {params.megahit_assembly_file} > {output.fixed_megahit_final_contigs_file} "
-
-rule combine_and_sort_assembly:
-    input:
-        long_scaffolds_spades_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","spades/long_scaffolds.fasta"),
-        fixed_megahit_final_contigs_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","megahit/fixed_headers_final.contigs.fa")
-    output:
-        genome_final_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","final_assembly.fasta")
-    params:
-        threads = config["assembler_threads"],
-        combined_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","combined_file.fasta"),
-        long_scaffolds_megahit_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","megahit/fixed_headers_long.contigs.fa"),
-        min_scaffold_length = config["min_scaffold_length"],
-        memory_in_gb = config["memory_in_gb"]
-    conda: "utils/envs/biopython_env.yaml"
-    shell:
-        "python utils/scripts/filter_sequences_by_length.py -i {input.fixed_megahit_final_contigs_file} -l {params.min_scaffold_length} -o {params.long_scaffolds_megahit_file}; "
-        "cat {input.long_scaffolds_spades_file} {params.long_scaffolds_megahit_file} > {params.combined_assembly_file}; "
-        "python utils/scripts/sort_assembly_by_length.py -i {params.combined_assembly_file} -o {output.genome_final_assembly_file}; "
-        
-rule rename_final_assembly_file:
-    input:
-        genome_final_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","final_assembly.fasta")
-    output:
-        renamed_genome_assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")
-    conda: "utils/envs/biopython_env.yaml"
-    shell:
-        "python utils/scripts/fix_fasta_header_length.py -i {input.genome_final_assembly_file} -o {output.renamed_genome_assembly_file}"
-
+        "python utils/scripts/filter_sequences_by_length.py -i {input.spades_scaffolds_assembly_file} -l {params.min_scaffold_length} -o {output.renamed_genome_assembly_file}"
+    
 rule quast:
     input:
         assembly_file = os.path.join(config["output_dir"],"genomes","{sample}","assembly","{sample}_genome.fa")

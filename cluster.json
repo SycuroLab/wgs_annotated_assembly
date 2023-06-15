@@ -13,7 +13,7 @@
   },
   "fastqc_raw" :
   {
-
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -21,7 +21,7 @@
   },
   "multiqc_raw" :
   {
-
+    "name": "wgs_annotated_assembly.{rule}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -30,7 +30,7 @@
   },
   "prinseq" :
   {
-
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -38,7 +38,7 @@
   },
   "fastqc_prinseq_filt" :
   {
-
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -46,7 +46,7 @@
   },
   "multiqc_prinseq_filt" :
   {
-
+    "name": "wgs_annotated_assembly.{rule}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -55,63 +55,16 @@
   },
   "spades_assembly" :
   {
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "partition": "synergy,cpu2022,cpu2023",
     "cpus-per-task" : 28,
     "time" : "7-00:00:00",
     "mem" : 220G,
 
   },
-  "filter_long_scaffolds" :
+  "filter_sequences_by_length" :
   {
-
-    "cpus-per-task" : 1,
-    "time" : "1-00:00:00",
-    "mem" : 9G,
-
-  },
-  "map_reads_to_assembly" :
-  {
-
-    "cpus-per-task" : 1,
-    "time" : "1-00:00:00",
-    "mem" : 9G,
-
-  },
-  "recover_unmapped_spades_reads" :
-  {
-
-    "cpus-per-task" : 14,
-    "time" : "1-00:00:00",
-    "mem" : 60G,
-
-  },
-  "megahit_unmapped_spades_reads" :
-  {
-    "partition": "synergy,cpu2022,cpu2023",
-    "cpus-per-task" : 28,
-    "time" : "7-00:00:00",
-    "mem" : 220G,
-
-  },
-  "combine_and_sort_assembly" :
-  {
-
-    "cpus-per-task" : 1,
-    "time" : "1-00:00:00",
-    "mem" : 9G,
-
-  },
-  "rename_final_assembly_file" :
-  {
-
-    "cpus-per-task" : 1,
-    "time" : "1-00:00:00",
-    "mem" : 9G,
-
-  },
-  "rename_refined_bin_file" :
-  {
-
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "cpus-per-task" : 1,
     "time" : "1-00:00:00",
     "mem" : 9G,
@@ -119,6 +72,7 @@
   },
   "checkm" :
   {
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "partition": "synergy,cpu2021,cpu2022,cpu2023",
     "cpus-per-task" : 28,
     "time" : "05:00:00",
@@ -129,6 +83,7 @@
   },
   "gtdbtk" :
   {
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "partition": "synergy,cpu2021,cpu2022,cpu2023",
     "cpus-per-task" : 28,
     "time" : "05:00:00",
@@ -139,6 +94,7 @@
   },
   "eggnog_mapper" :
   {
+    "name": "wgs_annotated_assembly.{rule}.{wildcards}",
     "partition": "synergy,cpu2021,cpu2022,cpu2023",
     "cpus-per-task" : 14,
     "time" : "05:00:00",

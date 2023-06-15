@@ -2,25 +2,21 @@
 # * Parameters for metagenotate pipeline *
 # ***************************************
 
-#list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/ref_list.txt"
-
-list_files: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly/utils/twist96_3_ref_list.txt"
+list_files: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/analysis/plate1/contigs_1kb_updated/wgs_annotated_assembly/list_files.txt"
 
 # Path to fastq_files.
-#input_dir: "/home/kevin.muirhead/fastq"
 
-#input_dir: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/data/Plate1_L001"
-input_dir: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/data/plate1"
+input_dir: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/data/plate1/"
 
-output_dir: "/bulk/sycuro_bulk/lsycuro_labshare/kevin/wgs_annotated_assembly_test"
+output_dir: "/bulk/IMCshared_bulk/sycuro_shared_projects/Twist96/novaseq_run/analysis/plate1/contigs_1kb_updated"
 
 # Suffix for forward reads.
 #forward_read_suffix: "_R1.fastq.gz"
-forward_read_suffix: "_L001_R1.fastq.gz"
+forward_read_suffix: "_R1.fastq"
 
 # Suffix for reverse reads.
 #reverse_read_suffix: "_R2.fastq.gz"
-reverse_read_suffix: "_L001_R2.fastq.gz"
+reverse_read_suffix: "_R2.fastq"
 
 ### Prinseq parameters
 trimleft: 0
@@ -33,12 +29,13 @@ trim_qual_type: "mean"
 trim_qual_rule: "lt"
 lc_method: "dust"
 lc_threshold: 7
+derep: "1,4"
 
 # Minimum length for reads
 minlength: 60
 
 # Maximum number of N bases allowed
-maxn: 15
+maxn: 5
 
 ### Spades parameters
 
@@ -51,7 +48,7 @@ memory_in_gb: 220
 ## Filter by length
 
 # Minimum sequence length of the final genome assembly file. Default: 500
-min_scaffold_length: 500
+min_scaffold_length: 1000
 
 ### quast parameters.
 
