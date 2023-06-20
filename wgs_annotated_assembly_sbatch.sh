@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --partition=synergy,cpu2019,cpu2021,cpu2022
+#SBATCH --partition=cpu2013,parallel,single,lattice,cpu2022,cpu2021,cpu2019,synergy
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
