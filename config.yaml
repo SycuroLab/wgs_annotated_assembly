@@ -29,7 +29,7 @@ trim_qual_type: "mean"
 trim_qual_rule: "lt"
 lc_method: "dust"
 lc_threshold: 7
-derep: "1,4"
+derep: "14"
 
 # Minimum length for reads
 minlength: 60
